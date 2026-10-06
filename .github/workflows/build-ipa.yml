@@ -46,7 +46,19 @@ jobs:
           if call not in s:
               raise SystemExit("Expected Pipes backend call not found")
           s = s.replace(call, '#if !defined(IPHONEOS)\n  m_input_backends.emplace_back(ciface::Pipes::CreateInputBackend(this));\n#endif', 1)
-          ci.write_text(s)
+
+          # Fin's Metal shader path must keep the framebuffer-fetch input attachment
+          # on a distinct Metal texture slot from the 8 regular pixel samplers.
+          metal = Path("Source/Core/VideoBackends/Metal/MTLUtil.mm")
+          s = metal.read_text()
+          old_binding = "MakeResourceBinding(spv::ExecutionModelFragment, 1, 0, 0, 16, 0), // ps/input attachment (framebuffer fetch)"
+          new_binding = "MakeResourceBinding(spv::ExecutionModelFragment, 1, 0, 0, 8, 0), // ps/input attachment (framebuffer fetch)"
+          if old_binding not in s:
+              raise SystemExit("Expected Metal framebuffer-fetch binding not found")
+          s = s.replace(old_binding, new_binding, 1)
+          metal.write_text(s)
+
+          ci.write_text(s if False else ci.read_text())
           PY
 
       - name: Build Fin engine/app
