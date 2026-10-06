@@ -21,6 +21,8 @@ jobs:
         run: |
           rm -rf third_party/dolphin-ios
           git clone --depth 1 --recurse-submodules https://github.com/OatmealDome/dolphin-ios.git third_party/dolphin-ios
+          git -C third_party/dolphin-ios rev-parse HEAD
+          test -f third_party/dolphin-ios/Source/iOS/App/DolphiniOS.xcodeproj/project.pbxproj
 
       - name: Build NexaEmu frontend
         run: |
