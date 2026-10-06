@@ -1,4 +1,4 @@
-name: Build NexaEmu IPA
+name: Build NexaEmu
 
 on:
   workflow_dispatch:
@@ -6,17 +6,33 @@ on:
     branches: [main]
 
 jobs:
-  build-ipa:
+  build:
     runs-on: macos-15
     steps:
-      - name: Checkout
+      - name: Checkout NexaEmu
         uses: actions/checkout@v4
 
-      - name: Build iOS app
+      - name: Install native build tools
         run: |
-          xcodebuild             -project NexaEmu.xcodeproj             -scheme NexaEmu             -configuration Release             -sdk iphoneos             -derivedDataPath build             CODE_SIGNING_ALLOWED=NO             CODE_SIGNING_REQUIRED=NO             build
+          brew install cmake ninja
 
-      - name: Package IPA
+      - name: Fetch Dolphin iOS source
+        run: |
+          git clone --depth 1 https://github.com/OatmealDome/dolphin-ios.git third_party/dolphin-ios
+
+      - name: Build NexaEmu
+        run: |
+          xcodebuild \
+            -project NexaEmu.xcodeproj \
+            -scheme NexaEmu \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            build
+
+      - name: Package unsigned IPA
         run: |
           rm -rf Payload NexaEmu.ipa
           mkdir -p Payload
