@@ -11,37 +11,38 @@ jobs:
     steps:
       - name: Checkout NexaEmu
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Install native build tools
-        run: |
-          brew install cmake ninja
+        run: brew install cmake ninja bartycrouch
 
-      - name: Fetch Dolphin iOS source
+      - name: Fetch DolphiniOS
         run: |
-          git clone --depth 1 https://github.com/OatmealDome/dolphin-ios.git third_party/dolphin-ios
+          rm -rf third_party/dolphin-ios
+          git clone --depth 1 --recurse-submodules https://github.com/OatmealDome/dolphin-ios.git third_party/dolphin-ios
 
-      - name: Build NexaEmu
+      - name: Build NexaEmu frontend
         run: |
-          xcodebuild \
-            -project NexaEmu.xcodeproj \
-            -scheme NexaEmu \
-            -configuration Release \
-            -sdk iphoneos \
-            -derivedDataPath build \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            build
+          xcodebuild             -project NexaEmu.xcodeproj             -scheme NexaEmu             -configuration Release             -sdk iphoneos             -derivedDataPath build/NexaEmu             CODE_SIGNING_ALLOWED=NO             CODE_SIGNING_REQUIRED=NO             build
 
-      - name: Package unsigned IPA
+      - name: Build DolphiniOS engine target
+        working-directory: third_party/dolphin-ios
+        run: |
+          xcodebuild             -project Source/iOS/App/DolphiniOS.xcodeproj             -scheme "DiOS (NJB)"             -configuration "Release (Non-Jailbroken)"             -sdk iphoneos             -derivedDataPath "$GITHUB_WORKSPACE/build/DolphiniOS"             -destination generic/platform=iOS             DOL_PBID_ORGANIZATION_IDENTIFIER="com.ahmad47eo"             DOL_BUILD_SOURCE="nexaemu"             CODE_SIGNING_ALLOWED=NO             CODE_SIGNING_REQUIRED=NO             build
+
+      - name: Package NexaEmu frontend IPA
         run: |
           rm -rf Payload NexaEmu.ipa
           mkdir -p Payload
-          cp -R build/Build/Products/Release-iphoneos/NexaEmu.app Payload/
+          cp -R build/NexaEmu/Build/Products/Release-iphoneos/NexaEmu.app Payload/
           /usr/bin/ditto -c -k --sequesterRsrc --keepParent Payload NexaEmu.ipa
 
-      - name: Upload IPA
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: NexaEmu-unsigned-IPA
-          path: NexaEmu.ipa
+          name: NexaEmu-build
+          path: |
+            NexaEmu.ipa
+            build/DolphiniOS/Build/Products/Release-Non-Jailbroken-iphoneos/DolphiniOS.app
           if-no-files-found: error
