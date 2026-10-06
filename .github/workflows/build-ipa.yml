@@ -1,4 +1,4 @@
-name: Build NexaEmu
+name: Build NexaEmu from Fin engine
 
 on:
   workflow_dispatch:
@@ -11,40 +11,41 @@ jobs:
     steps:
       - name: Checkout NexaEmu
         uses: actions/checkout@v4
-        with:
-          submodules: recursive
 
-      - name: Install native build tools
+      - name: Install Fin build tools
         run: brew install cmake ninja bartycrouch
 
-      - name: Fetch DolphiniOS
-        run: |
-          rm -rf third_party/dolphin-ios
-          git clone --depth 1 --recurse-submodules https://github.com/OatmealDome/dolphin-ios.git third_party/dolphin-ios
-          git -C third_party/dolphin-ios rev-parse HEAD
-          test -f third_party/dolphin-ios/Source/iOS/App/DolphiniOS.xcodeproj/project.pbxproj
+      - name: Clone Fin
+        run: git clone --depth 1 --recurse-submodules https://github.com/MuffinFluffin/Fin.git third_party/Fin
 
-      - name: Build NexaEmu frontend
+      - name: Build Fin engine/app
+        working-directory: third_party/Fin
         run: |
-          xcodebuild             -project NexaEmu.xcodeproj             -scheme NexaEmu             -configuration Release             -sdk iphoneos             -derivedDataPath build/NexaEmu             CODE_SIGNING_ALLOWED=NO             CODE_SIGNING_REQUIRED=NO             build
+          xcodebuild \
+            -project Source/iOS/App/Fin.xcodeproj \
+            -scheme Fin \
+            -configuration "Release" \
+            -sdk iphoneos \
+            -destination generic/platform=iOS \
+            -derivedDataPath "$GITHUB_WORKSPACE/build/Fin" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            build
 
-      - name: Build DolphiniOS engine target
-        working-directory: third_party/dolphin-ios
+      - name: Package Fin engine as NexaEmu IPA
         run: |
-          xcodebuild             -project Source/iOS/App/DolphiniOS.xcodeproj             -scheme "DiOS (NJB)"             -configuration "Release (Non-Jailbroken)"             -sdk iphoneos             -derivedDataPath "$GITHUB_WORKSPACE/build/DolphiniOS"             -destination generic/platform=iOS             DOL_PBID_ORGANIZATION_IDENTIFIER="com.ahmad47eo"             DOL_BUILD_SOURCE="nexaemu"             CODE_SIGNING_ALLOWED=NO             CODE_SIGNING_REQUIRED=NO             build
-
-      - name: Package NexaEmu frontend IPA
-        run: |
+          APP="build/Fin/Build/Products/Release-iphoneos/Fin.app"
+          test -d "$APP"
+          /usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName NexaEmu" "$APP/Info.plist" || true
+          /usr/libexec/PlistBuddy -c "Set :CFBundleName NexaEmu" "$APP/Info.plist" || true
           rm -rf Payload NexaEmu.ipa
-          mkdir -p Payload
-          cp -R build/NexaEmu/Build/Products/Release-iphoneos/NexaEmu.app Payload/
+          mkdir Payload
+          cp -R "$APP" Payload/NexaEmu.app
           /usr/bin/ditto -c -k --sequesterRsrc --keepParent Payload NexaEmu.ipa
 
-      - name: Upload build artifacts
+      - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
-          name: NexaEmu-build
-          path: |
-            NexaEmu.ipa
-            build/DolphiniOS/Build/Products/Release-Non-Jailbroken-iphoneos/DolphiniOS.app
+          name: NexaEmu-Fin-engine-IPA
+          path: NexaEmu.ipa
           if-no-files-found: error
