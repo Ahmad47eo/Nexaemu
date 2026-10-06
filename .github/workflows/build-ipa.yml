@@ -18,6 +18,20 @@ jobs:
       - name: Clone Fin
         run: git clone --depth 1 --recurse-submodules https://github.com/MuffinFluffin/Fin.git third_party/Fin
 
+      - name: Patch Fin CMake for iOS
+        working-directory: third_party/Fin
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("Source/Core/InputCommon/CMakeLists.txt")
+          s = p.read_text()
+          old = "if(UNIX)\n  target_sources(inputcommon PRIVATE"
+          new = "if(UNIX AND NOT IOS)\n  target_sources(inputcommon PRIVATE"
+          if old not in s:
+              raise SystemExit("Expected Pipes block not found")
+          p.write_text(s.replace(old, new, 1))
+          PY
+
       - name: Build Fin engine/app
         working-directory: third_party/Fin
         run: |
