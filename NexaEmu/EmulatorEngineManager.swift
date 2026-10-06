@@ -22,7 +22,6 @@ struct RVZGame: Identifiable, Codable, Hashable {
 enum Console: String, CaseIterable {
     case gameCube = "GameCube"
     case wii = "Wii"
-    case wiiU = "Wii U"
 }
 
 enum EngineState {
@@ -38,7 +37,6 @@ final class EmulatorEngineManager: ObservableObject {
     @Published private(set) var lastMessage = "DolphiniOS native bridge is the remaining engine integration step."
 
     private let gameCubeWiiEngine = "DolphiniOS"
-    private let wiiUEngine = "Cemu"
 
     init() {
         refresh()
@@ -49,7 +47,6 @@ final class EmulatorEngineManager: ObservableObject {
         // These are integration targets, not claims that the native cores are linked.
         states[.gameCube] = .ready
         states[.wii] = .ready
-        states[.wiiU] = .unavailable
     }
 
     func status(for console: Console) -> String {
@@ -64,7 +61,7 @@ final class EmulatorEngineManager: ObservableObject {
     }
 
     var summary: String {
-        "GameCube and Wii are targeted at the DolphiniOS/Dolphin native core. Wii U remains unavailable because Cemu is not an iOS backend."
+        "GameCube and Wii use the DolphiniOS/Dolphin native core. Wii U will be added later."
     }
 
     func importGames(_ result: Result<[URL], Error>) {
