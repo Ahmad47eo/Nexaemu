@@ -16,14 +16,13 @@ struct ContentView: View {
                     VStack(alignment: .leading, spacing: 22) {
                         VStack(alignment: .leading, spacing: 6) {
                             Text("NexaEmu").font(.system(size: 42, weight: .bold))
-                            Text("GameCube • Wii • Wii U")
+                            Text("GameCube • Wii")
                                 .foregroundStyle(.secondary)
                         }
 
                         HStack(spacing: 12) {
                             CoreCard(title: "GameCube", status: engine.status(for: .gameCube), icon: "cube.fill")
                             CoreCard(title: "Wii", status: engine.status(for: .wii), icon: "remote.fill")
-                            CoreCard(title: "Wii U", status: engine.status(for: .wiiU), icon: "gamecontroller.fill")
                         }
 
                         VStack(alignment: .leading, spacing: 12) {
