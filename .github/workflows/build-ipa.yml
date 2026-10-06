@@ -41,6 +41,11 @@ jobs:
           if include not in s:
               raise SystemExit("Expected Pipes include not found")
           s = s.replace(include, '#if !defined(IPHONEOS)\n#include "InputCommon/ControllerInterface/Pipes/Pipes.h"\n#endif', 1)
+
+          call = "m_input_backends.emplace_back(ciface::Pipes::CreateInputBackend(this));"
+          if call not in s:
+              raise SystemExit("Expected Pipes backend call not found")
+          s = s.replace(call, '#if !defined(IPHONEOS)\n  m_input_backends.emplace_back(ciface::Pipes::CreateInputBackend(this));\n#endif', 1)
           ci.write_text(s)
           PY
 
