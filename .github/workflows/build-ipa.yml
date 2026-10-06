@@ -51,14 +51,17 @@ jobs:
           # on a distinct Metal texture slot from the 8 regular pixel samplers.
           metal = Path("Source/Core/VideoBackends/Metal/MTLUtil.mm")
           s = metal.read_text()
-          old_binding = "MakeResourceBinding(spv::ExecutionModelFragment, 1, 0, 0, 16, 0), // ps/input attachment (framebuffer fetch)"
-          new_binding = "MakeResourceBinding(spv::ExecutionModelFragment, 1, 0, 0, 8, 0), // ps/input attachment (framebuffer fetch)"
-          if old_binding not in s:
+          import re
+          pattern = r"MakeResourceBinding\\(spv::ExecutionModelFragment,\\s*1,\\s*0,\\s*0,\\s*16,\\s*0\\),\\s*//\\s*ps/input attachment \\(framebuffer fetch\\)"
+          s, count = re.subn(
+              pattern,
+              "MakeResourceBinding(spv::ExecutionModelFragment, 1, 0, 0, 8, 0), // ps/input attachment (framebuffer fetch)",
+              s,
+              count=1,
+          )
+          if count != 1:
               raise SystemExit("Expected Metal framebuffer-fetch binding not found")
-          s = s.replace(old_binding, new_binding, 1)
           metal.write_text(s)
-
-          ci.write_text(s if False else ci.read_text())
           PY
 
       - name: Build Fin engine/app
