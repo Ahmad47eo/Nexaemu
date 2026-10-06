@@ -52,7 +52,7 @@ jobs:
           metal = Path("Source/Core/VideoBackends/Metal/MTLUtil.mm")
           s = metal.read_text()
           import re
-          pattern = r"MakeResourceBinding\(spv::ExecutionModelFragment,\s*1,\s*0,\s*0,\s*16,\s*0\),\s*//\s*ps/input attachment \(framebuffer fetch\)"
+          pattern = r"MakeResourceBinding\\(spv::ExecutionModelFragment,\\s*1,\\s*0,\\s*0,\\s*16,\\s*0\\),\\s*//\\s*ps/input attachment \\(framebuffer fetch\\)"
           s, count = re.subn(
               pattern,
               "MakeResourceBinding(spv::ExecutionModelFragment, 1, 0, 0, 8, 0), // ps/input attachment (framebuffer fetch)",
