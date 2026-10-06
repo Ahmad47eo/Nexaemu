@@ -1,4 +1,5 @@
 name: Build NexaEmu from Fin engine
+# Fresh build trigger
 
 on:
   workflow_dispatch:
