@@ -9,12 +9,14 @@
 /* Begin PBXBuildFile section */
 		A10000000000000000000001 /* NexaEmuApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000011 /* NexaEmuApp.swift */; };
 		A10000000000000000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000012 /* ContentView.swift */; };
+		A10000000000000000000003 /* EmulatorEngineManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000013 /* EmulatorEngineManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		A10000000000000000000010 /* NexaEmu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NexaEmu.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A10000000000000000000011 /* NexaEmuApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NexaEmuApp.swift; sourceTree = "<group>"; };
 		A10000000000000000000012 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A10000000000000000000013 /* EmulatorEngineManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmulatorEngineManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,6 +37,7 @@
 			children = (
 				A10000000000000000000011 /* NexaEmuApp.swift */,
 				A10000000000000000000012 /* ContentView.swift */,
+				A10000000000000000000013 /* EmulatorEngineManager.swift */,
 			);
 			path = NexaEmu;
 			sourceTree = "<group>";
@@ -88,7 +91,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		A10000000000000000000021 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000001 /* NexaEmuApp.swift in Sources */, A10000000000000000000002 /* ContentView.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
+		A10000000000000000000021 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A10000000000000000000001 /* NexaEmuApp.swift in Sources */, A10000000000000000000002 /* ContentView.swift in Sources */, A10000000000000000000003 /* EmulatorEngineManager.swift in Sources */); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
