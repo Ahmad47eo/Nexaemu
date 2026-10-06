@@ -34,6 +34,14 @@ jobs:
           if old not in s:
               raise SystemExit("Expected Pipes block not found")
           p.write_text(s.replace(old, new, 1))
+
+          ci = Path("Source/Core/InputCommon/ControllerInterface/ControllerInterface.cpp")
+          s = ci.read_text()
+          include = '#include "InputCommon/ControllerInterface/Pipes/Pipes.h"'
+          if include not in s:
+              raise SystemExit("Expected Pipes include not found")
+          s = s.replace(include, '#if !defined(IPHONEOS)\n#include "InputCommon/ControllerInterface/Pipes/Pipes.h"\n#endif', 1)
+          ci.write_text(s)
           PY
 
       - name: Build Fin engine/app
